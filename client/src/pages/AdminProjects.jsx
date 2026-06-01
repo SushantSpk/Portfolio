@@ -24,19 +24,24 @@ export default function AdminProjects() {
   const [filter, setFilter] = useState('all')
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     let active = true
 
     async function loadInitialProjects() {
-      const data = await getProjects()
-      if (active) setProjects(data)
+      try {
+        const data = await getProjects()
+        if (active) setProjects(data)
+      } catch {
+        if (active) setError('Could not load projects. Check backend and Supabase setup.')
+      } finally {
+        if (active) setLoading(false)
+      }
     }
 
-    loadInitialProjects().catch(() => {
-      if (active) setError('Could not load projects. Check backend and Supabase setup.')
-    })
+    loadInitialProjects()
 
     return () => {
       active = false
@@ -68,7 +73,8 @@ export default function AdminProjects() {
   }), [projects])
 
   async function loadProjects() {
-    setProjects(await getProjects())
+    const data = await getProjects()
+    setProjects(data)
   }
 
   function updateField(event) {
@@ -177,10 +183,21 @@ export default function AdminProjects() {
 
   return (
     <AdminLayout title="Projects">
-      <div className="admin-grid">
-        <Stat label="Total projects" value={stats.total} />
-        <Stat label="Featured" value={stats.featured} />
-        <Stat label="Need images" value={stats.missingImages} />
+      <section className="admin-hero glass">
+        <div>
+          <span className="admin-kicker">Project studio</span>
+          <h2>Curate the work your visitors see first.</h2>
+          <p>Create, reorder, feature, and enrich project cards with screenshots and case-study links.</p>
+        </div>
+        <div className="admin-hero-actions">
+          <button className="btn btn-primary" type="button" onClick={cancelEdit}>New project</button>
+        </div>
+      </section>
+
+      <div className="admin-grid admin-stat-grid">
+        <Stat label="Total projects" value={stats.total} meta="Visible public work records" loading={loading} />
+        <Stat label="Featured" value={stats.featured} meta="Highlighted in the work grid" loading={loading} tone="success" />
+        <Stat label="Need images" value={stats.missingImages} meta="Projects without screenshots" loading={loading} tone="warning" />
       </div>
 
       <div className="admin-grid two project-admin-grid">
@@ -233,6 +250,13 @@ export default function AdminProjects() {
         </form>
 
         <section className="admin-card glass">
+          <div className="admin-card-head">
+            <div>
+              <span className="eyebrow">Project Library</span>
+              <h2>{filteredProjects.length} shown</h2>
+            </div>
+            {loading && <span className="admin-mini-pill">Syncing</span>}
+          </div>
           <div className="admin-toolbar">
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search projects..." />
             <div className="admin-filter">
@@ -248,7 +272,7 @@ export default function AdminProjects() {
 
           <div className="admin-list">
             {filteredProjects.map((project) => (
-              <article className="admin-row glass project-row" key={project.id}>
+              <article className={`admin-row glass project-row ${editingId === project.id ? 'active' : ''}`} key={project.id}>
                 <div className="admin-row-media">
                   {project.image_url ? <img src={project.image_url} alt="" /> : <span>{project.display_order || '-'}</span>}
                 </div>
@@ -264,7 +288,8 @@ export default function AdminProjects() {
                 </div>
               </article>
             ))}
-            {!filteredProjects.length && <p className="admin-empty">No projects match this view.</p>}
+            {loading && <p className="admin-empty">Loading projects from Supabase...</p>}
+            {!loading && !filteredProjects.length && <p className="admin-empty">No projects match this view.</p>}
           </div>
         </section>
       </div>
@@ -281,11 +306,12 @@ function Field({ label, children }) {
   )
 }
 
-function Stat({ label, value }) {
+function Stat({ label, value, meta, loading, tone = 'default' }) {
   return (
-    <div className="admin-card glass admin-stat">
+    <div className={`admin-card glass admin-stat ${tone}`}>
       <div className="fk">{label}</div>
-      <strong>{value}</strong>
+      <strong>{loading ? '...' : value}</strong>
+      <p>{loading ? 'Syncing project data...' : meta}</p>
     </div>
   )
 }

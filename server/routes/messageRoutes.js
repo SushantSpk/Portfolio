@@ -54,6 +54,13 @@ router.patch(
   requireAdmin,
   asyncHandler(async (req, res) => {
     const status = req.body.status || "read";
+    const allowedStatuses = ["unread", "read", "replied"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        error: "Message status must be unread, read, or replied.",
+      });
+    }
 
     const { data, error } = await req.supabase
       .from("contact_messages")

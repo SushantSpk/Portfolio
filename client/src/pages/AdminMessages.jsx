@@ -12,6 +12,7 @@ export default function AdminMessages() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [marking, setMarking] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -61,13 +62,34 @@ export default function AdminMessages() {
     setSelected(data.find((message) => message.id === nextSelectedId) || data[0] || null)
   }
 
+  async function refreshMessages() {
+    setLoading(true)
+    setError('')
+
+    try {
+      await loadMessages()
+    } catch (refreshError) {
+      setError(refreshError.response?.data?.error || 'Messages could not be refreshed.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   async function mark(statusValue) {
     if (!selected) return
+    setMarking(true)
     setError('')
-    const updated = await updateMessageStatus(selected.id, statusValue)
-    setSelected(updated)
-    setStatus(`Marked as ${statusValue}.`)
-    await loadMessages(updated.id)
+
+    try {
+      const updated = await updateMessageStatus(selected.id, statusValue)
+      setSelected(updated)
+      setStatus(`Marked as ${statusValue}.`)
+      await loadMessages(updated.id)
+    } catch (markError) {
+      setError(markError.response?.data?.error || 'Message status could not be updated.')
+    } finally {
+      setMarking(false)
+    }
   }
 
   async function sendReply(event) {
@@ -92,14 +114,32 @@ export default function AdminMessages() {
 
   return (
     <AdminLayout title="Messages">
-      <div className="admin-grid">
-        <Stat label="Unread" value={stats.unread} />
-        <Stat label="Read" value={stats.read} />
-        <Stat label="Replied" value={stats.replied} />
+      <section className="admin-hero glass">
+        <div>
+          <span className="admin-kicker">Lead inbox</span>
+          <h2>Turn portfolio messages into conversations.</h2>
+          <p>Search inbound requests, update status, and reply through Resend without leaving the CMS.</p>
+        </div>
+        <div className="admin-hero-actions">
+          <button className="btn btn-ghost" type="button" onClick={refreshMessages} disabled={loading}>Refresh inbox</button>
+        </div>
+      </section>
+
+      <div className="admin-grid admin-stat-grid">
+        <Stat label="Unread" value={stats.unread} loading={loading} tone="warning" />
+        <Stat label="Read" value={stats.read} loading={loading} />
+        <Stat label="Replied" value={stats.replied} loading={loading} tone="success" />
       </div>
 
-      <div className="admin-grid two">
+      <div className="admin-grid two admin-inbox-grid">
         <section className="admin-card glass">
+          <div className="admin-card-head">
+            <div>
+              <span className="eyebrow">Inbox</span>
+              <h2>{filtered.length} messages</h2>
+            </div>
+            {loading && <span className="admin-mini-pill">Loading</span>}
+          </div>
           <div className="admin-toolbar">
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search messages..." />
             <div className="admin-filter">
@@ -110,7 +150,7 @@ export default function AdminMessages() {
           </div>
 
           {loading && <p className="admin-empty">Loading messages...</p>}
-          {error && <p className="form-error show">{error}</p>}
+          {error && <p className="form-error show" aria-live="polite">{error}</p>}
           <div className="admin-list">
             {filtered.map((message) => (
               <button
@@ -149,16 +189,16 @@ export default function AdminMessages() {
               </div>
               <blockquote className="admin-message">{selected.message}</blockquote>
               <div className="admin-actions">
-                <button className="btn btn-ghost" type="button" onClick={() => mark('read')}>Mark read</button>
-                <button className="btn btn-ghost" type="button" onClick={() => mark('unread')}>Mark unread</button>
-                <button className="btn btn-ghost" type="button" onClick={() => mark('replied')}>Mark replied</button>
+                <button className="btn btn-ghost" type="button" onClick={() => mark('read')} disabled={marking}>Mark read</button>
+                <button className="btn btn-ghost" type="button" onClick={() => mark('unread')} disabled={marking}>Mark unread</button>
+                <button className="btn btn-ghost" type="button" onClick={() => mark('replied')} disabled={marking}>Mark replied</button>
               </div>
               <form className="admin-form compact" onSubmit={sendReply}>
                 <label>Reply by email</label>
                 <textarea rows="7" value={reply} onChange={(event) => setReply(event.target.value)} placeholder={`Hi ${selected.name},`} required />
                 <button className="btn btn-primary" type="submit" disabled={sending}>{sending ? 'Sending...' : 'Send reply with Resend'}</button>
-                {status && <p className="sent-msg show">{status}</p>}
-                {error && <p className="form-error show">{error}</p>}
+                {status && <p className="sent-msg show" aria-live="polite">{status}</p>}
+                {error && <p className="form-error show" aria-live="polite">{error}</p>}
               </form>
             </>
           ) : (
@@ -170,11 +210,12 @@ export default function AdminMessages() {
   )
 }
 
-function Stat({ label, value }) {
+function Stat({ label, value, loading, tone = 'default' }) {
   return (
-    <div className="admin-card glass admin-stat">
+    <div className={`admin-card glass admin-stat ${tone}`}>
       <div className="fk">{label}</div>
-      <strong>{value}</strong>
+      <strong>{loading ? '...' : value}</strong>
+      <p>{loading ? 'Syncing inbox...' : 'Current inbox state'}</p>
     </div>
   )
 }
