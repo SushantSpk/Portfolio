@@ -1,0 +1,63 @@
+export const fallbackProfile = {
+  full_name: 'Sushant Sapkota',
+  role: 'AI & Automation Engineer',
+  bio: 'I build intelligent systems, automation workflows, and full-stack software products that solve real business problems.',
+  location: 'Kathmandu - Remote',
+  email: 'hello@sushantsapkota.com',
+  profile_image_url: '/assets/images/profile.png',
+  resume_url: '#contact',
+}
+
+export const fallbackProjects = [
+  {
+    id: 'inventory-system',
+    title: 'Inventory Management System',
+    category: 'Operations',
+    description:
+      'A real-time inventory platform with predictive restocking, barcode scanning flows, and multi-warehouse sync.',
+    image_url: '',
+    tech_stack: ['React', 'Node.js', 'PostgreSQL', 'WebSocket'],
+    is_featured: true,
+    display_order: 1,
+  },
+  {
+    id: 'ai-workflow',
+    title: 'AI Automation Workflow System',
+    category: 'AI',
+    description: 'Agentic pipelines connecting CRMs, inboxes, and ERPs to reduce repetitive manual operations.',
+    image_url: '',
+    tech_stack: ['LLM Agents', 'n8n', 'Python'],
+    is_featured: false,
+    display_order: 2,
+  },
+  {
+    id: 'event-management',
+    title: 'Event Management System',
+    category: 'Platform',
+    description: 'Ticketing, scheduling, and attendee analytics in one platform built for real event operations.',
+    image_url: '',
+    tech_stack: ['React', 'Stripe', 'WebSocket'],
+    is_featured: false,
+    display_order: 3,
+  },
+  {
+    id: 'weather-app',
+    title: 'Weather App',
+    category: 'Product',
+    description: 'A crisp forecast app with location intelligence and a clean minimal interface.',
+    image_url: '',
+    tech_stack: ['React', 'REST API', 'PWA'],
+    is_featured: false,
+    display_order: 4,
+  },
+  {
+    id: 'university-management',
+    title: 'University Department Management',
+    category: 'Enterprise',
+    description: 'A unified portal for courses, faculty, student records, role access, and reporting.',
+    image_url: '',
+    tech_stack: ['Full-Stack', 'RBAC', 'Reporting'],
+    is_featured: false,
+    display_order: 5,
+  },
+]

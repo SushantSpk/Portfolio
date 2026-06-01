@@ -185,7 +185,7 @@
     });
   }
 
-  /* ---- Contact form: Formspree submission ---- */
+  /* ---- Contact form: backend submission ---- */
   const form = document.getElementById("contactForm");
   const sentMsg = document.getElementById("sentMsg");
   const formError = document.getElementById("formError");
@@ -212,15 +212,13 @@
       }
 
       try {
-        /*
-          Replace YOUR_FORM_ID in Portfolio.html's form action with your
-          actual Formspree form ID. Formspree works on static sites and does
-          not require private API keys or secrets in frontend code.
-        */
-        const response = await fetch(form.action, {
+        const response = await fetch(form.action || "http://localhost:5000/api/contact", {
           method: "POST",
-          body: new FormData(form),
-          headers: { Accept: "application/json" }
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
         });
 
         if (!response.ok) {
