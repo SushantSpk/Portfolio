@@ -42,9 +42,10 @@ app.use((error, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => {
+  global.portfolioServer = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
+  global.portfolioServer.ref();
 }
 
 module.exports = app;

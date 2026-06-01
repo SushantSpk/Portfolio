@@ -222,8 +222,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
 }
 .nav-pill {
-  max-width: var(--maxw); margin-inline: auto;
-  margin: 14px clamp(12px, 4vw, 40px) 0;
+  width: min(var(--maxw), calc(100% - clamp(24px, 8vw, 80px)));
+  margin: 14px auto 0;
   border-radius: 999px;
   transition: border-radius 0.3s var(--ease);
 }
@@ -237,10 +237,15 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .nav.menu-open .nav-pill { border-radius: var(--r-2xl); }
 .nav-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 10px 10px 20px;
+  display: grid; align-items: center;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(160px, 1fr);
+  gap: clamp(14px, 2.4vw, 40px);
+  padding: 10px 12px 10px 20px;
 }
-.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -0.02em; }
+.brand {
+  display: flex; align-items: center; justify-self: start;
+  gap: 12px; font-weight: 700; letter-spacing: -0.02em;
+}
 .brand .mark {
   width: 36px; height: 36px; border-radius: 11px; flex: none;
   display: grid; place-items: center;
@@ -251,7 +256,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .brand .who { line-height: 1.15; }
 .brand .who small { display: block; font-size: 11px; font-weight: 500; color: var(--text-mute); letter-spacing: 0; }
 
-.nav-links { display: flex; align-items: center; gap: 2px; }
+.nav-links {
+  display: flex; align-items: center; justify-content: center;
+  justify-self: center;
+  gap: 2px;
+}
 .nav-links a {
   font-size: 14px; font-weight: 500; color: var(--text-soft);
   padding: 8px 14px; border-radius: 999px;
@@ -259,7 +268,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .nav-links a:hover, .nav-links a.active { color: var(--text); background: var(--chip-bg); }
 
-.nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-right {
+  display: flex; align-items: center; justify-content: flex-end;
+  justify-self: end; gap: 8px;
+}
 .nav-cta { padding: 10px 18px; font-size: 14px; }
 
 .theme-toggle {
@@ -301,13 +313,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* Mobile menu */
 .mobile-menu {
   display: flex; flex-direction: column; gap: 3px;
-  padding: 12px 12px 16px;
+  padding: 0 12px;
   transform: translateY(-8px);
   opacity: 0; pointer-events: none;
-  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease), padding 0.3s var(--ease);
   max-height: 0; overflow: hidden;
 }
 .nav.menu-open .mobile-menu {
+  padding: 12px 12px 16px;
   transform: translateY(0); opacity: 1;
   pointer-events: all; max-height: 500px;
 }
@@ -1132,6 +1145,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 @media (max-width: 960px) {
+  .nav-inner { grid-template-columns: 1fr auto; }
+  .nav-right { grid-column: 2; }
   .hero-inner { grid-template-columns: 1fr; gap: 0; }
   .hero-visual {
     height: 400px; order: -1;
@@ -1180,5 +1195,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     max-width: 300px;
   }
   .contact-grid { gap: 32px; }
-  .nav-pill { margin: 10px 10px 0; }
+  .nav-pill {
+    width: calc(100% - 20px);
+    margin: 10px auto 0;
+  }
 }

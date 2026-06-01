@@ -56,23 +56,52 @@ export default function usePortfolioEffects() {
     }
 
     const reveals = document.querySelectorAll('.reveal')
+    const observedReveals = new WeakSet()
+    let revealObserver = null
+
+    const observeReveal = (element) => {
+      if (!(element instanceof Element) || observedReveals.has(element)) return
+      observedReveals.add(element)
+
+      if (reduce || !('IntersectionObserver' in window)) {
+        element.classList.add('in')
+        return
+      }
+
+      revealObserver.observe(element)
+    }
+
+    const observeRevealTree = (node) => {
+      if (!(node instanceof Element)) return
+      if (node.matches('.reveal')) observeReveal(node)
+      node.querySelectorAll('.reveal').forEach(observeReveal)
+    }
+
     if (reduce || !('IntersectionObserver' in window)) {
       reveals.forEach((el) => el.classList.add('in'))
     } else {
-      const io = new IntersectionObserver(
+      revealObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add('in')
-              io.unobserve(entry.target)
+              revealObserver.unobserve(entry.target)
             }
           })
         },
         { threshold: 0.1, rootMargin: '0px 0px -6% 0px' },
       )
-      reveals.forEach((el) => io.observe(el))
-      cleanup.push(() => io.disconnect())
+      reveals.forEach(observeReveal)
+      cleanup.push(() => revealObserver.disconnect())
     }
+
+    const revealMutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach(observeRevealTree)
+      })
+    })
+    revealMutationObserver.observe(document.body, { childList: true, subtree: true })
+    cleanup.push(() => revealMutationObserver.disconnect())
 
     const glow = document.getElementById('cursorGlow')
     let glowRaf = 0

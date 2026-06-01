@@ -4,7 +4,7 @@ export default function Hero({ profile }) {
       <div className="aurora"><span className="a1" /><span className="a2" /><span className="a3" /></div>
       <div className="wrap hero-inner">
         <div className="hero-copy">
-          <span className="hero-status reveal"><span className="dot" /> Available for select projects · 2026</span>
+          <span className="hero-status reveal"><span className="dot" /> Available for select projects &middot; 2026</span>
           <h1 className="reveal" data-d="1">I build <span className="grad-text">intelligent systems</span> that help businesses work smarter.</h1>
           <p className="hero-sub reveal" data-d="2">{profile.bio}</p>
           <div className="hero-roles reveal" data-d="2">
@@ -54,7 +54,7 @@ export default function Hero({ profile }) {
           </div>
           <div className="float fp-card fp-avail glass" data-depth="2.3">
             <span className="avail-dot" />
-            <div className="avail-text"><strong>Open for projects</strong><span>Remote friendly · 2026</span></div>
+            <div className="avail-text"><strong>Open for projects</strong><span>Remote friendly &middot; 2026</span></div>
           </div>
         </div>
       </div>

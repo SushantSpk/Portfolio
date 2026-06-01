@@ -23,20 +23,33 @@ export default function PortfolioPage() {
     let active = true
 
     async function loadContent() {
-      try {
-        const [profileData, projectsData] = await Promise.all([getProfile(), getProjects()])
-        if (!active) return
+      const [profileResult, projectsResult] = await Promise.allSettled([getProfile(), getProjects()])
+      if (!active) return
+
+      if (profileResult.status === 'fulfilled') {
+        const profileData = profileResult.value
         if (profileData) setProfile({ ...fallbackProfile, ...profileData })
-        if (Array.isArray(projectsData) && projectsData.length > 0) setProjects(projectsData)
-      } catch {
-        // Keep the static fallback content when Supabase tables are not ready yet.
       }
+
+      if (projectsResult.status === 'fulfilled') {
+        const projectsData = projectsResult.value
+        if (Array.isArray(projectsData) && projectsData.length > 0) setProjects(projectsData)
+      }
+      // Keep fallback content for whichever Supabase request is not ready yet.
     }
 
     loadContent()
+    const refreshWhenVisible = () => {
+      if (!document.hidden) loadContent()
+    }
+
+    window.addEventListener('focus', loadContent)
+    document.addEventListener('visibilitychange', refreshWhenVisible)
 
     return () => {
       active = false
+      window.removeEventListener('focus', loadContent)
+      document.removeEventListener('visibilitychange', refreshWhenVisible)
     }
   }, [])
 

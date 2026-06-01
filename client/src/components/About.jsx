@@ -1,8 +1,8 @@
 export default function About({ profile }) {
   const facts = [
     ['Based in', profile.location || 'Kathmandu - Remote'],
-    ['Focus', 'AI · Automation · Full-Stack'],
-    ['Stack', 'TypeScript · Python · React'],
+    ['Focus', 'AI \u00b7 Automation \u00b7 Full-Stack'],
+    ['Stack', 'TypeScript \u00b7 Python \u00b7 React'],
     ['Currently', 'Open to collaborations'],
   ]
 
