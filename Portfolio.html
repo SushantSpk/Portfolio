@@ -193,7 +193,8 @@
     <div class="about-photo glass reveal" data-d="2">
       <div class="photo-glow"></div>
       <div class="photo-fill">
-        <span class="photo-tag">portrait &middot; drop photo</span>
+        <img class="photo-img" src="assets/images/profile.png" alt="Portrait of Sushant Sapkota" decoding="async" />
+        <span class="photo-tag">Sushant Sapkota</span>
       </div>
       <div class="photo-foot">
         <span class="photo-badge"><span class="pb-dot"></span> Building &amp; shipping</span>
@@ -285,7 +286,8 @@
         <span class="badge-feat">Featured</span>
         <div class="shot">
           <div class="shot-fill">
-            <span class="shot-tag">dashboard ui &middot; drop screenshot</span>
+            <img class="shot-img" src="assets/images/inventory-system.jpg" alt="Inventory management system dashboard screenshot" loading="lazy" decoding="async" />
+            <span class="shot-tag">Inventory System</span>
           </div>
         </div>
         <div class="meta">
@@ -299,7 +301,10 @@
 
       <article class="proj glass reveal" data-d="1">
         <div class="shot">
-          <div class="shot-fill"><span class="shot-tag">flow diagram &middot; drop screenshot</span></div>
+          <div class="shot-fill">
+            <img class="shot-img" src="assets/images/ai-workflow.jpg" alt="AI automation workflow system screenshot" loading="lazy" decoding="async" />
+            <span class="shot-tag">AI Workflow</span>
+          </div>
         </div>
         <div class="meta">
           <div class="meta-top"><span class="idx">02 — AI</span></div>
@@ -312,7 +317,10 @@
 
       <article class="proj glass reveal" data-d="2">
         <div class="shot">
-          <div class="shot-fill"><span class="shot-tag">event app &middot; drop screenshot</span></div>
+          <div class="shot-fill">
+            <img class="shot-img" src="assets/images/event-management.jpg" alt="Event management system interface screenshot" loading="lazy" decoding="async" />
+            <span class="shot-tag">Event Platform</span>
+          </div>
         </div>
         <div class="meta">
           <div class="meta-top"><span class="idx">03 — Platform</span></div>
@@ -325,7 +333,10 @@
 
       <article class="proj glass reveal" data-d="1">
         <div class="shot">
-          <div class="shot-fill"><span class="shot-tag">weather ui &middot; drop screenshot</span></div>
+          <div class="shot-fill">
+            <img class="shot-img" src="assets/images/weather-app.jpg" alt="Weather app forecast interface screenshot" loading="lazy" decoding="async" />
+            <span class="shot-tag">Weather App</span>
+          </div>
         </div>
         <div class="meta">
           <div class="meta-top"><span class="idx">04 — Product</span></div>
@@ -338,7 +349,10 @@
 
       <article class="proj glass reveal" data-d="2">
         <div class="shot">
-          <div class="shot-fill"><span class="shot-tag">admin portal &middot; drop screenshot</span></div>
+          <div class="shot-fill">
+            <img class="shot-img" src="assets/images/university-management.jpg" alt="University department management portal screenshot" loading="lazy" decoding="async" />
+            <span class="shot-tag">Admin Portal</span>
+          </div>
         </div>
         <div class="meta">
           <div class="meta-top"><span class="idx">05 — Enterprise</span></div>
@@ -548,7 +562,7 @@
           </div>
         </div>
         <div class="contact-r">
-          <form class="form" id="contactForm" novalidate>
+          <form class="form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
             <div class="form-row">
               <div class="field"><label for="cn">Name</label><input id="cn" name="name" type="text" placeholder="Your name" required /></div>
               <div class="field"><label for="ce">Email</label><input id="ce" name="email" type="email" placeholder="you@company.com" required /></div>
@@ -556,9 +570,10 @@
             <div class="field"><label for="cc">Company <span class="opt">(optional)</span></label><input id="cc" name="company" type="text" placeholder="Company or project name" /></div>
             <div class="field"><label for="cm">What are you building?</label><textarea id="cm" name="message" placeholder="Tell me about the problem you want to solve..." required></textarea></div>
             <button type="submit" class="btn btn-primary">Send message <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <p class="form-error" id="formError" role="status" aria-live="polite"></p>
             <p class="form-note">Or email directly — I read every message.</p>
           </form>
-          <div class="sent-msg" id="sentMsg">
+          <div class="sent-msg" id="sentMsg" role="status" aria-live="polite" tabindex="-1">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             Thanks — your message is on its way. I'll reply within a day.
           </div>

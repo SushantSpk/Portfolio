@@ -185,15 +185,72 @@
     });
   }
 
-  /* ---- Contact form ---- */
+  /* ---- Contact form: Formspree submission ---- */
   const form = document.getElementById("contactForm");
   const sentMsg = document.getElementById("sentMsg");
+  const formError = document.getElementById("formError");
+
+  function setFormError(message) {
+    if (!formError) return;
+    formError.textContent = message;
+    formError.classList.toggle("show", Boolean(message));
+  }
+
   if (form) {
-    form.addEventListener("submit", function (e) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    const normalButtonHtml = submitButton ? submitButton.innerHTML : "";
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      form.style.display = "none";
-      if (sentMsg) sentMsg.classList.add("show");
+
+      setFormError("");
+      if (sentMsg) sentMsg.classList.remove("show");
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Sending...";
+      }
+
+      try {
+        /*
+          Replace YOUR_FORM_ID in Portfolio.html's form action with your
+          actual Formspree form ID. Formspree works on static sites and does
+          not require private API keys or secrets in frontend code.
+        */
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" }
+        });
+
+        if (!response.ok) {
+          let message = "Message could not be sent right now. Please try again or email me directly.";
+          try {
+            const data = await response.json();
+            if (data && Array.isArray(data.errors) && data.errors.length) {
+              message = data.errors.map(function (error) { return error.message; }).join(" ");
+            }
+          } catch (jsonError) {
+            /* Keep the friendly fallback message if Formspree returns non-JSON. */
+          }
+          throw new Error(message);
+        }
+
+        form.reset();
+        form.classList.add("is-sent");
+        if (sentMsg) {
+          sentMsg.classList.add("show");
+          sentMsg.focus({ preventScroll: true });
+        }
+      } catch (error) {
+        const friendlyError = "Message could not be sent right now. Please try again or email me directly.";
+        const message = error.message === "Failed to fetch" ? friendlyError : error.message;
+        setFormError(message || friendlyError);
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.innerHTML = normalButtonHtml;
+        }
+      }
     });
   }
 
